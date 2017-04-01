@@ -2,19 +2,23 @@
 # @Author: louys
 # @Date:   2017-03-31 15:53:58
 # @Last Modified by:   louys
-# @Last Modified time: 2017-03-31 16:41:19
+# @Last Modified time: 2017-04-01 18:53:48
 import json
+import config
 
-fp = open('bookmarks.json','r',encoding='utf-8')
-out = open('out.txt','w',encoding='utf-8')
+fp = open(config.json_file,'r',encoding='utf-8')
 content = fp.read()
 content = json.loads(content)
 
-lt = content['children'][0]['children'][7]['children']
+num = len(content['children'][0]['children'])
 
-for i in range(len(lt)):
-    print(lt[i]['title'],lt[i]['uri'])
-    out.write(str(lt[i]['title'])+'\r\n')
-    out.write(str(lt[i]['uri'])+'\r\n')
+for i in range(num):
+    try:
+        print(content['children'][0]['children'][i]['children'][0]['title'])
+        print(content['children'][0]['children'][i]['children'][1]['title'])
+        print(content['children'][0]['children'][i]['children'][2]['title'])
+        print('---------------------{}----------------------'.format(str(i)))
+    except:
+        pass
 
-out.close()
+

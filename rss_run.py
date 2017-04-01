@@ -2,17 +2,18 @@
 # @Author: louys
 # @Date:   2017-03-31 14:37:33
 # @Last Modified by:   louys
-# @Last Modified time: 2017-03-31 22:12:52
+# @Last Modified time: 2017-04-01 18:37:27
 import requests
 import hashlib
 import json
+import config
 from threading import Thread
-import os
+import re
 title = []
 uri = []
 compare = {}
 num = 0
-thread_num = 12
+thread_num = config.thread_num
 href = []
 
 
@@ -21,7 +22,7 @@ def load_json(filename):
     fp = open(filename,'r',encoding='utf-8')
     content = json.loads(fp.read())
     fp.close()
-    lt = content['children'][0]['children'][7]['children']
+    lt = content['children'][0]['children'][7]['children'] #maybe change
     for i in range(len(lt)):
         title.append(str(lt[i]['title']))
         uri.append(str(lt[i]['uri']))
@@ -29,7 +30,9 @@ def load_json(filename):
 
 def post(url):
     content = requests.get(url,timeout=10).content
-    return hashlib.md5(content).hexdigest()
+    tmp = content.decode('utf-8')
+    content = re.sub(r"\d+", "d+", tmp)
+    return hashlib.md5(content.encode('utf-8')).hexdigest()
 
 
 def single_thread(start,end):
@@ -45,7 +48,7 @@ def single_thread(start,end):
             #print(e)
 
 def save():
-    num = load_json('bookmarks.json')
+    num = load_json(config.json_file)
     group_num = int(num/thread_num)
     threads = []
     for i in range(0,thread_num):
@@ -94,7 +97,7 @@ def deal():
 
 
 def main():
-    num = load_json('bookmarks.json')
+    num = load_json(config.json_file)
     group_num = int(num/thread_num)
     threads = []
     for i in range(0,thread_num):
